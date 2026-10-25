@@ -3,108 +3,113 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digit Data Lab</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Digit Data Lab | Analytics</title>
 <style>
+:root{--bg:#080d19;--panel:#111a2d;--line:#26334c;--muted:#9aa9c5;--blue:#8195ff;--cyan:#42dfc4}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:#eef2ff;padding:20px}
-header{padding:20px 0}
-h1{margin:0;color:#9caeff;font-size:28px}
-p{color:#aab4ce;line-height:1.5}
-.card{background:#151d33;border:1px solid #293653;border-radius:16px;padding:18px;margin:16px 0}
-h2{font-size:17px;margin-top:0}
-input,button{width:100%;padding:13px;border-radius:9px;font-size:15px;margin-top:8px}
-input{background:#0b1020;color:white;border:1px solid #405071}
-button{background:#7389ff;color:#081024;border:0;font-weight:bold}
-button.secondary{background:#263450;color:white}
-.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.tile{background:#202b46;padding:12px 4px;border-radius:10px;text-align:center}
-.tile strong{display:block;font-size:22px;color:#aab8ff}
-.tile small{color:#b4bfd7}
-.barrow{display:grid;grid-template-columns:22px 1fr 36px;gap:8px;align-items:center;margin:11px 0}
-.track{height:10px;background:#293653;border-radius:8px;overflow:hidden}
-.fill{height:100%;background:linear-gradient(90deg,#7c8dff,#42d6c5);width:0}
-.note{font-size:12px;color:#91a0bd}
-#message{white-space:pre-wrap;overflow-wrap:anywhere}
+body{margin:0;background:radial-gradient(ellipse at top,#18264a 0,#080d19 48%);color:#f2f5ff;font-family:system-ui,Arial,sans-serif;min-height:100vh}
+.wrap{max-width:1000px;margin:auto;padding:22px 16px 45px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#8394ff,#42dfc4);display:grid;place-items:center;color:#091020;font-size:22px;font-weight:900}
+.brand{font-weight:800;font-size:18px}
+.sub{color:var(--muted);font-size:12px;margin-top:3px}
+.pill{margin-left:auto;border:1px solid #345c59;color:var(--cyan);padding:7px 10px;border-radius:30px;font-size:11px}
+.hero{margin:25px 0}
+.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:2px;font-weight:800}
+h1{font-size:clamp(29px,6vw,46px);letter-spacing:-1.5px;margin:9px 0}
+.hero p,.muted{color:var(--muted);line-height:1.6;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.panel{background:linear-gradient(145deg,#151f35,#101727);border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:14px;box-shadow:0 12px 35px #0002}
+.panel h2{font-size:15px;margin:0 0 13px}
+.metric{font-size:25px;font-weight:800;margin:7px 0}
+.label{color:var(--muted);font-size:12px}
+input{width:100%;background:#090f1e;border:1px solid #354360;color:#fff;padding:14px;border-radius:11px;font-size:15px;outline:none}
+input:focus{border-color:var(--blue)}
+button{border:0;border-radius:11px;padding:13px 16px;font-weight:800;background:linear-gradient(100deg,#8998ff,#55dfd0);color:#071020;width:100%;margin-top:10px;font-size:14px}
+button.secondary{background:#222e48;color:#eef2ff;border:1px solid #354360}
+.barrow{display:grid;grid-template-columns:20px 1fr 48px;align-items:center;gap:9px;margin:15px 0;font-size:12px}
+.track{height:10px;background:#26334c;border-radius:20px;overflow:hidden}
+.fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#8395ff,#43e0c6);transition:width .3s}
+.tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.tile{padding:12px 3px;text-align:center;border:1px solid #2c3a55;border-radius:11px;background:#0c1425}
+.tile b{display:block;font-size:20px;color:var(--blue)}
+.tile span{font-size:10px;color:var(--muted)}
+.note{font-size:12px;color:var(--muted);line-height:1.6}
+footer{text-align:center;color:#7786a3;font-size:11px;padding:20px 0}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.main-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;align-items:start}.tiles{grid-template-columns:repeat(5,minmax(0,1fr))}}
 </style>
 </head>
 <body>
-<header>
-<p>EDUCATIONAL DATA PROJECT</p>
-<h1>Digit Data Lab</h1>
-<p>Explore digit frequencies and simple statistics from a sequence of numbers.</p>
+<div class="wrap">
+<header class="top">
+<div class="logo">D</div>
+<div><div class="brand">Digit Data Lab</div><div class="sub">PERSONAL ANALYTICS WORKSPACE</div></div>
+<div class="pill">● OFFLINE MODE</div>
 </header>
-
-<section class="card">
-<h2>1. Enter a sequence</h2>
-<p>Use digits from 0 to 9. Separate them with spaces or commas, or enter a continuous string of digits.</p>
-<input id="sequence" value="1, 2, 4, 2, 7, 1, 9, 4, 2, 6, 0, 8, 1, 5, 4, 7, 3, 2, 9, 6" placeholder="Enter digits here">
-<button onclick="analyse()">Analyse sequence</button>
+<section class="hero">
+<div class="eyebrow">DATA • PATTERNS • STATISTICS</div>
+<h1>Understand your <span style="color:var(--blue)">data.</span></h1>
+<p>A clean workspace for exploring digit frequencies, distributions and basic statistics.</p>
+</section>
+<section class="grid">
+<div class="panel"><div class="label">TOTAL DIGITS</div><div class="metric" id="total">20</div><div class="label">In current sample</div></div>
+<div class="panel"><div class="label">UNIQUE DIGITS</div><div class="metric" id="unique">10</div><div class="label">Different values found</div></div>
+<div class="panel"><div class="label">MOST FREQUENT</div><div class="metric" id="most">2</div><div class="label">Highest observed count</div></div>
+<div class="panel"><div class="label">MEAN DIGIT</div><div class="metric" id="average">4.10</div><div class="label">Average value</div></div>
+</section>
+<div class="main-grid">
+<div>
+<section class="panel">
+<h2>Sequence explorer</h2>
+<p class="muted">Enter digits from 0–9, using commas, spaces or a continuous string.</p>
+<input id="sequence" value="1, 2, 4, 2, 7, 1, 9, 4, 2, 6, 0, 8, 1, 5, 4, 7, 3, 2, 9, 6">
+<button onclick="analyse()">Analyse data</button>
 <button class="secondary" onclick="resetData()">Restore sample</button>
-<p class="note">Sample data is illustrative, not live market data.</p>
+<p id="message" class="note" aria-live="polite"></p>
 </section>
-
-<section class="card">
-<h2>2. Summary</h2>
-<div class="grid">
-<div class="tile"><strong id="total">20</strong><small>Total digits</small></div>
-<div class="tile"><strong id="unique">10</strong><small>Unique digits</small></div>
-<div class="tile"><strong id="most">2</strong><small>Most frequent</small></div>
-<div class="tile"><strong id="least">0</strong><small>Least frequent</small></div>
-<div class="tile"><strong id="average">4.1</strong><small>Mean digit</small></div>
+<section class="panel">
+<h2>Digit distribution</h2>
+<div id="tiles" class="tiles"></div>
+</section>
 </div>
-<p id="message" class="note"></p>
-</section>
-
-<section class="card">
-<h2>3. Frequency chart</h2>
+<div>
+<section class="panel">
+<h2>Frequency overview</h2>
+<p class="note">Observed count for each digit</p>
 <div id="chart"></div>
 </section>
-
-<section class="card">
-<h2>4. Frequency table</h2>
-<div id="table" class="grid"></div>
+<section class="panel">
+<h2>About this dashboard</h2>
+<p class="note">This dashboard calculates statistics from the digits you provide. The sample is illustrative and is not a live data feed.</p>
+<p class="note">Past frequencies describe the supplied dataset; they do not establish what a future result will be.</p>
 </section>
-
-<section class="card">
-<h2>What does this show?</h2>
-<p>The chart counts how often each digit appears in the sequence you entered. A high count only describes this sample; it does not tell you what a future digit will be.</p>
-<p class="note">This project is an offline educational statistics demo. It does not connect to a market feed or generate trading predictions.</p>
-</section>
-
+</div>
+</div>
+<footer>DIGIT DATA LAB · EDUCATIONAL STATISTICS PROJECT</footer>
+</div>
 <script>
 const sample="1, 2, 4, 2, 7, 1, 9, 4, 2, 6, 0, 8, 1, 5, 4, 7, 3, 2, 9, 6";
-
 function analyse(){
- const raw=document.getElementById("sequence").value;
- const digits=raw.replace(/[\s,;]+/g,"");
- if(!digits || !/^[0-9]+$/.test(digits)){
-  document.getElementById("message").textContent="Please enter digits from 0 to 9 only.";
-  return;
- }
- const counts=Array(10).fill(0);
- for(const ch of digits) counts[Number(ch)]++;
- const total=digits.length;
- const max=Math.max(...counts), min=Math.min(...counts);
- const most=counts.indexOf(max), least=counts.indexOf(min);
- const mean=digits.split("").reduce((sum,ch)=>sum+Number(ch),0)/total;
- document.getElementById("total").textContent=total;
- document.getElementById("unique").textContent=counts.filter(n=>n>0).length;
- document.getElementById("most").textContent=most+" ("+max+")";
- document.getElementById("least").textContent=least+" ("+min+")";
- document.getElementById("average").textContent=mean.toFixed(2);
- document.getElementById("message").textContent="Counts are based only on the "+total+" digits in your current sample.";
- document.getElementById("chart").innerHTML=counts.map((n,d)=>
-  '<div class="barrow"><b>'+d+'</b><div class="track"><div class="fill" style="width:'+(n/max*100)+'%"></div></div><span>'+n+'</span></div>'
- ).join("");
- document.getElementById("table").innerHTML=counts.map((n,d)=>
-  '<div class="tile"><strong>'+d+'</strong><small>Count: '+n+'</small><br><small>'+(n/total*100).toFixed(1)+'%</small></div>'
- ).join("");
+const raw=document.getElementById("sequence").value;
+const digits=raw.replace(/[\s,;]+/g,"");
+if(!digits||!/^[0-9]+$/.test(digits)){
+document.getElementById("message").textContent="Please enter digits from 0 to 9 only.";
+return;
 }
-function resetData(){
- document.getElementById("sequence").value=sample;
- analyse();
+const counts=Array(10).fill(0);
+for(const ch of digits)counts[Number(ch)]++;
+const total=digits.length,max=Math.max(...counts);
+const mean=[...digits].reduce((s,ch)=>s+Number(ch),0)/total;
+document.getElementById("total").textContent=total;
+document.getElementById("unique").textContent=counts.filter(n=>n>0).length;
+document.getElementById("most").textContent=counts.indexOf(max)+" ("+max+")";
+document.getElementById("average").textContent=mean.toFixed(2);
+document.getElementById("message").textContent="Analysis complete: "+total+" digits counted.";
+document.getElementById("chart").innerHTML=counts.map((n,d)=>'<div class="barrow"><b>'+d+'</b><div class="track"><div class="fill" style="width:'+(n/max*100)+'%"></div></div><span>'+n+' · '+(n/total*100).toFixed(0)+'%</span></div>').join("");
+document.getElementById("tiles").innerHTML=counts.map((n,d)=>'<div class="tile"><b>'+d+'</b><span>Count '+n+'</span></div>').join("");
 }
+function resetData(){document.getElementById("sequence").value=sample;analyse()}
 analyse();
 </script>
 </body>
