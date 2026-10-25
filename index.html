@@ -13,20 +13,86 @@
 <div class="grid">
 <section class="card"><div class="eyebrow">01 · Strategy</div><h2>Analysis configuration</h2><label for="strategy">Strategy type</label><select id="strategy"><option>Matches / Differs</option><option>Over / Under</option><option>Even / Odd</option><option>Rise / Fall</option></select><label for="market">Market / index</label><select id="market"><option>Volatility 10 (1s)</option><option>Volatility 10</option><option>Volatility 25 (1s)</option><option>Volatility 25</option><option>Volatility 50 (1s)</option><option>Volatility 50</option><option>Volatility 75 (1s)</option><option>Volatility 75</option><option>Volatility 100 (1s)</option><option>Volatility 100</option><option>Volatility 150 (1s)</option><option>Volatility 250 (1s)</option><option>Other / imported dataset</option></select><div class="notice">Market selection labels the dataset only; it does not rank an index as best for trading.</div></section>
 <section class="card"><div class="eyebrow">02 · Connection</div><h2>Data stream status</h2><div class="stats"><div class="stat"><div class="v" id="connState">Offline</div><div class="k">Connection</div></div><div class="stat"><div class="v" id="tickCount">0</div><div class="k">Imported observations</div></div><div class="stat"><div class="v" id="lastUpdate">—</div><div class="k">Last update</div></div></div><p class="sub">No live feed is active. A real connection must be implemented and tested before showing live status.</p><div class="row"><button class="secondary" id="demoBtn">Load sample data</button><button class="secondary" id="clearBtn">Clear data</button></div></section>
-<section class="card"><div class="eyebrow">03 · Historical data</div><h2>Import observations</h2><label for="dataInput">Paste digit sequence or delimited data</label><textarea id="dataInput" placeholder="Example: 1, 1, 2, 3, 3, 7, 0, 4"></textarea><label for="fileInput">Or choose a CSV / TXT file</label><input id="fileInput" type="file" accept=".csv,.txt,text/plain,text/csv"><div class="row" style="margin-top:10px"><button id="analyzeBtn">Analyze dataset</button><button class="secondary" id="exampleBtn">Use example</button></div><p class="sub">For digit analysis, the importer extracts digits 0–9 from your file. Keep a separate copy of original data.</p></section>
+<section class="card"><div class="eyebrow">03 · Historical data</div><h2>Import observations</h2><label for="dataMode">Data format</label><select id="dataMode"><option value="digits">Final digits (e.g. 1, 2, 3, 7)</option><option value="prices">Price values (extract last decimal digit)</option></select><label for="dataInput">Paste data</label><textarea id="dataInput" placeholder="Digits: 1, 2, 3, 7&#10;Prices: 123.41, 123.52, 123.07"></textarea><label for="fileInput">Or choose a CSV / TXT file</label><input id="fileInput" type="file" accept=".csv,.txt,text/plain,text/csv"><label for="columnSelect">CSV column to analyze</label><select id="columnSelect" disabled><option value="">Upload a CSV to detect columns</option></select><p id="importInfo" class="sub">The importer will try to identify a price/quote/tick/close column. Check the selected column before analyzing.</p><div class="row" style="margin-top:10px"><button id="analyzeBtn">Analyze dataset</button><button class="secondary" id="exampleBtn">Use example</button></div><p class="sub">Price mode takes the final digit after the decimal point from each price. It ignores timestamps and other columns when a price column is selected. Always verify the data format.</p></section>
 <section class="card wide"><div class="eyebrow">04 · Statistical engine</div><h2>Dataset summary</h2><div class="stats"><div class="stat"><div class="v" id="total">0</div><div class="k">Total digits</div></div><div class="stat"><div class="v" id="unique">0 / 10</div><div class="k">Distinct digits observed</div></div><div class="stat"><div class="v" id="mean">—</div><div class="k">Mean digit</div></div><div class="stat"><div class="v" id="most">—</div><div class="k">Most frequent digit</div></div><div class="stat"><div class="v" id="evenPct">—</div><div class="k">Even digits</div></div><div class="stat"><div class="v" id="oddPct">—</div><div class="k">Odd digits</div></div></div><div id="statNote" class="notice">Import a historical dataset to calculate its statistics. Results describe the supplied data only.</div></section>
 <section class="card"><div class="eyebrow">05 · Frequency distribution</div><h2>Digit occurrences</h2><div id="bars"><p class="sub">Frequency bars will appear after analysis.</p></div></section>
 <section class="card"><div class="eyebrow">06 · Research model</div><h2>Pattern validation</h2><div class="stat"><div class="k">Uniform-frequency reference</div><div class="v">10% per digit</div></div><p class="sub">A reference baseline, not a claim about every market or the next outcome.</p><div id="validation" class="result">Waiting for enough observations.</div><div class="notice">This version uses transparent statistical summaries, not a trained neural network. It does not produce trading signals or fabricated confidence percentages.</div></section>
 <section class="card fullrow"><div class="eyebrow">Research notes</div><h2>Interpretation & limitations</h2><p class="result" id="interpretation">No dataset analyzed yet. Upload historical observations to begin.</p><p class="sub">Historical frequencies alone do not establish predictability. Any future model would need time-ordered training and testing, a simple baseline comparison, and probability calibration on unseen data.</p></section>
 </div><div class="footer">Digit Data Lab · Educational statistical research · No trading advice</div></main>
 <script>
-const $=id=>document.getElementById(id);let digits=[];
+const $=id=>document.getElementById(id);
+let digits=[], csvRows=[], csvHeaders=[], csvLoaded=false;
 function setStatus(text,kind='offline'){$('topStatus').textContent=text;$('connState').textContent=kind==='ok'?'Imported':kind==='error'?'Error':'Offline';$('statusDot').style.background=kind==='ok'?'var(--green)':kind==='error'?'var(--red)':'var(--amber)'}
-function extractDigits(s){return(s.match(/[0-9]/g)||[]).map(Number)}
-function parseInput(){return extractDigits($('dataInput').value.trim())}
+function extractDigits(s){return(String(s).match(/[0-9]/g)||[]).map(Number)}
+function finalDecimalDigit(value){
+  let s=String(value??'').trim().replace(/,/g,'');
+  if(!s || !/[0-9]/.test(s)) return null;
+  // Require a decimal point to avoid treating integer prices as a one-digit price.
+  if(!s.includes('.')) return null;
+  const after=s.split('.').pop().replace(/[^0-9]/g,'');
+  return after.length ? Number(after.slice(-1)) : null;
+}
+function parseCSV(text){
+  const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/).filter(line=>line.trim()!=='');
+  return lines.map(line=>{
+    const cells=[];let cur='',quoted=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(ch==='"' && line[i+1]==='"' && quoted){cur+='"';i++}
+      else if(ch==='"'){quoted=!quoted}
+      else if(ch===',' && !quoted){cells.push(cur.trim());cur=''}
+      else {cur+=ch}
+    }
+    cells.push(cur.trim());return cells;
+  });
+}
+function setupColumns(rows){
+  csvRows=rows;csvHeaders=[];csvLoaded=rows.length>0;
+  const first=rows[0]||[];
+  const headerLooksLike=first.some(v=>/[a-zA-Z]/.test(v));
+  csvHeaders=first.map((v,i)=>headerLooksLike && v ? v : 'Column '+(i+1));
+  const dataStart=headerLooksLike?1:0;
+  $('columnSelect').innerHTML='';
+  csvHeaders.forEach((h,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=h;$('columnSelect').appendChild(o)});
+  $('columnSelect').disabled=!rows.length;
+  if(rows.length){
+    const preferred=csvHeaders.findIndex(h=>/price|quote|tick|close|last|value/i.test(h));
+    let chosen=preferred;
+    if(chosen<0){
+      // Heuristic: choose the column with the most decimal-looking values.
+      let best=-1;
+      for(let c=0;c<first.length;c++){
+        let score=0;
+        rows.slice(dataStart,dataStart+100).forEach(r=>{if(r[c] && /^\s*-?\d+\.\d+\s*$/.test(r[c]))score++});
+        if(score>best){best=score;chosen=c}
+      }
+    }
+    $('columnSelect').value=String(Math.max(0,chosen));
+    $('importInfo').textContent='Detected '+rows.length+' CSV row(s). Review the selected column: '+csvHeaders[Math.max(0,chosen)]+'. If the first row contains headers, it will be skipped.';
+  } else $('importInfo').textContent='No rows found in file.';
+}
+function parseTextData(){
+  const raw=$('dataInput').value.trim();
+  if(!raw)return [];
+  if($('dataMode').value==='digits') return extractDigits(raw);
+  return raw.split(/\r?\n|[,;\t]/).map(v=>finalDecimalDigit(v)).filter(v=>v!==null);
+}
+function parseSelectedCSV(){
+  if(!csvLoaded)return [];
+  const col=Number($('columnSelect').value);
+  const headerLooksLike=(csvRows[0]||[]).some(v=>/[a-zA-Z]/.test(v));
+  const rows=csvRows.slice(headerLooksLike?1:0);
+  if($('dataMode').value==='digits'){
+    return rows.map(r=>String(r[col]??'')).flatMap(extractDigits);
+  }
+  return rows.map(r=>finalDecimalDigit(r[col])).filter(v=>v!==null);
+}
 function analyze(arr){digits=arr;$('tickCount').textContent=arr.length.toLocaleString();$('lastUpdate').textContent=arr.length?new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'}):'—';setStatus(arr.length?'Historical data loaded':'Offline · No data',arr.length?'ok':'offline');const n=arr.length,counts=Array(10).fill(0);arr.forEach(d=>counts[d]++);$('total').textContent=n.toLocaleString();$('unique').textContent=counts.filter(x=>x>0).length+' / 10';$('mean').textContent=n?(arr.reduce((a,b)=>a+b,0)/n).toFixed(3):'—';const max=Math.max(...counts);$('most').textContent=n?counts.map((c,d)=>({c,d})).filter(x=>x.c===max).map(x=>x.d).join(', ')+' ('+max+')':'—';const ev=arr.filter(x=>x%2===0).length;$('evenPct').textContent=n?(ev/n*100).toFixed(1)+'%':'—';$('oddPct').textContent=n?((n-ev)/n*100).toFixed(1)+'%':'—';$('bars').innerHTML='';if(!n){$('bars').innerHTML='<p class="sub">Frequency bars will appear after analysis.</p>'}else counts.forEach((c,d)=>{const pct=c/n*100,line=document.createElement('div');line.className='barrow';line.innerHTML='<strong>'+d+'</strong><div class="track"><div class="fill" style="width:'+pct+'%"></div></div><div class="barval">'+c+' · '+pct.toFixed(1)+'%</div>';$('bars').appendChild(line)});if(!n){$('statNote').textContent='Import a historical dataset to calculate its statistics.';$('validation').textContent='Waiting for observations.';$('interpretation').textContent='No dataset analyzed yet.';return}const expected=n/10,chi=counts.reduce((sum,c)=>sum+((c-expected)**2/expected),0),top=counts.map((c,d)=>({c,d})).filter(x=>x.c===max).map(x=>x.d).join(', ');$('statNote').textContent='Observed counts only. Market: '+$('market').value+'. Selected category: '+$('strategy').value+'.';$('validation').textContent='Uniform-frequency reference test: chi-square = '+chi.toFixed(2)+' (9 degrees of freedom). '+(expected<5?'Caution: expected count per digit is below 5, so the usual chi-square approximation may be unreliable.':'This is descriptive only; it does not forecast the next outcome or account for serial dependence.')+'\nLargest observed count: digit '+top+' at '+(max/n*100).toFixed(2)+'%.';$('interpretation').textContent='Analyzed '+n+' digits. Most frequent digit(s): '+top+'. Even/odd split: '+(ev/n*100).toFixed(1)+'% even and '+((n-ev)/n*100).toFixed(1)+'% odd. Differences from a 10% reference may reflect random variation, data-generation properties, or sampling issues. Test on separate later observations before drawing conclusions.'}
-$('analyzeBtn').addEventListener('click',()=>{const a=parseInput();if(!a.length){setStatus('No valid digit data','error');$('interpretation').textContent='No digits found. Paste data or choose a CSV/TXT file.';return}analyze(a)});
+$('analyzeBtn').addEventListener('click',()=>{const a=csvLoaded?parseSelectedCSV():parseTextData();if(!a.length){setStatus('No valid data','error');$('interpretation').textContent='No usable observations found. Check the selected data format and CSV column.';return}analyze(a)});
 const sample='1,1,2,3,3,7,0,4,2,8,1,5,9,3,6,2,0,4,7,1,8,5,2,9,3,3,6,0,1,4,7,8,2,5,9,0,6,1,3,8,4,2,7,5,0,9,1,6,3,2';
-$('exampleBtn').addEventListener('click',()=>{$('dataInput').value=sample;analyze(parseInput())});$('demoBtn').addEventListener('click',()=>{$('dataInput').value=sample;analyze(parseInput())});$('clearBtn').addEventListener('click',()=>{$('dataInput').value='';$('fileInput').value='';analyze([])});
-$('fileInput').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{const t=await f.text();$('dataInput').value=t;const a=extractDigits(t);if(!a.length){setStatus('No digits found','error');$('interpretation').textContent='The selected file did not contain digits 0–9.';return}analyze(a)}catch(err){setStatus('File read failed','error');$('interpretation').textContent='Could not read this file. Try a plain TXT or CSV file.'}});
+$('exampleBtn').addEventListener('click',()=>{csvLoaded=false;$('columnSelect').disabled=true;$('dataMode').value='digits';$('dataInput').value=sample;analyze(parseTextData())});
+$('demoBtn').addEventListener('click',()=>{csvLoaded=false;$('columnSelect').disabled=true;$('dataMode').value='digits';$('dataInput').value=sample;analyze(parseTextData())});
+$('clearBtn').addEventListener('click',()=>{$('dataInput').value='';$('fileInput').value='';$('columnSelect').innerHTML='<option value="">Upload a CSV to detect columns</option>';$('columnSelect').disabled=true;csvRows=[];csvLoaded=false;analyze([])});
+$('dataMode').addEventListener('change',()=>{$('importInfo').textContent='Selected format: '+$('dataMode').selectedOptions[0].textContent+'. Verify the selected CSV column before analyzing.'});
+$('fileInput').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{const t=await f.text();$('dataInput').value=t;if(f.name.toLowerCase().endsWith('.csv')){setupColumns(parseCSV(t));$('dataMode').value='prices'}else{csvLoaded=false;$('columnSelect').disabled=true;$('importInfo').textContent='TXT loaded. Choose Final digits for a digit sequence or Price values for one price per line.'}setStatus('File loaded · review before analysis','ok')}catch(err){setStatus('File read failed','error');$('interpretation').textContent='Could not read this file. Try a plain TXT or CSV file.'}});
 </script></body></html>
