@@ -1,138 +1,32 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Digit Data Lab | Analytics</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Digit Data Lab | Market Research</title>
 <style>
-:root{--bg:#080d19;--panel:#111a2d;--line:#26334c;--muted:#9aa9c5;--blue:#8195ff;--cyan:#42dfc4}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at top,#18264a 0,#080d19 48%);color:#f2f5ff;font-family:system-ui,Arial,sans-serif;min-height:100vh}
-.wrap{max-width:1000px;margin:auto;padding:22px 16px 45px}
-.top{display:flex;align-items:center;gap:12px;margin-bottom:28px}
-.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#8394ff,#42dfc4);display:grid;place-items:center;color:#091020;font-size:22px;font-weight:900}
-.brand{font-weight:800;font-size:18px}
-.sub{color:var(--muted);font-size:12px;margin-top:3px}
-.pill{margin-left:auto;border:1px solid #345c59;color:var(--cyan);padding:7px 10px;border-radius:30px;font-size:11px}
-.hero{margin:25px 0}
-.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:2px;font-weight:800}
-h1{font-size:clamp(29px,6vw,46px);letter-spacing:-1.5px;margin:9px 0}
-.hero p,.muted{color:var(--muted);line-height:1.6;font-size:14px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.panel{background:linear-gradient(145deg,#151f35,#101727);border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:14px;box-shadow:0 12px 35px #0002}
-.panel h2{font-size:15px;margin:0 0 13px}
-.metric{font-size:25px;font-weight:800;margin:7px 0}
-.label{color:var(--muted);font-size:12px}
-input{width:100%;background:#090f1e;border:1px solid #354360;color:#fff;padding:14px;border-radius:11px;font-size:15px;outline:none}
-input:focus{border-color:var(--blue)}
-button{border:0;border-radius:11px;padding:13px 16px;font-weight:800;background:linear-gradient(100deg,#8998ff,#55dfd0);color:#071020;width:100%;margin-top:10px;font-size:14px}
-button.secondary{background:#222e48;color:#eef2ff;border:1px solid #354360}
-.barrow{display:grid;grid-template-columns:20px 1fr 48px;align-items:center;gap:9px;margin:15px 0;font-size:12px}
-.track{height:10px;background:#26334c;border-radius:20px;overflow:hidden}
-.fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#8395ff,#43e0c6);transition:width .3s}
-.tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
-.tile{padding:12px 3px;text-align:center;border:1px solid #2c3a55;border-radius:11px;background:#0c1425}
-.tile b{display:block;font-size:20px;color:var(--blue)}
-.tile span{font-size:10px;color:var(--muted)}
-.note{font-size:12px;color:var(--muted);line-height:1.6}
-footer{text-align:center;color:#7786a3;font-size:11px;padding:20px 0}
-@media(min-width:650px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.main-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;align-items:start}.tiles{grid-template-columns:repeat(5,minmax(0,1fr))}}
+:root{--bg:#080d1a;--panel:#111a2d;--line:#293754;--text:#edf3ff;--muted:#9baaca;--purple:#9b8cff;--cyan:#45e0d0;--green:#55d6a0;--amber:#ffc66d;--red:#ff7b91}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172345 0,#080d1a 48%);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:1050px;margin:auto;padding:18px 14px 40px}.top{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}.brand{display:flex;align-items:center;gap:11px}.logo{background:linear-gradient(135deg,#7566ff,#36d8d0);width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:22px;font-weight:900;color:#07101d}.brand h1{font-size:19px;margin:0;letter-spacing:.5px}.brand p{font-size:11px;color:var(--muted);margin:2px 0 0;letter-spacing:1.5px}.pill{border:1px solid var(--line);border-radius:99px;padding:7px 11px;color:var(--muted);font-size:12px}.statusdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin-right:6px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.card{background:linear-gradient(145deg,rgba(20,31,53,.98),rgba(13,22,39,.98));border:1px solid var(--line);border-radius:17px;padding:16px;min-width:0;box-shadow:0 10px 25px #0002}.wide{grid-column:1/-1}.eyebrow{font-size:11px;color:var(--muted);letter-spacing:1.3px;text-transform:uppercase;margin-bottom:7px}.card h2{font-size:16px;margin:0 0 12px}.sub{font-size:12px;color:var(--muted)}label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}select,input,textarea,button{font:inherit}select,input,textarea{width:100%;background:#0b1425;border:1px solid #344565;border-radius:10px;color:var(--text);padding:11px;outline:none}textarea{min-height:78px;resize:vertical}button{border:0;border-radius:10px;padding:11px 13px;background:linear-gradient(120deg,#8979ff,#5c91ff);color:#fff;font-weight:700;cursor:pointer}button.secondary{background:#1d2b45;border:1px solid #3a4b6b;color:var(--text)}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.stat{background:#0b1425;border:1px solid #253653;border-radius:12px;padding:11px;min-width:0}.stat .v{font-size:21px;font-weight:800;overflow-wrap:anywhere}.stat .k{font-size:11px;color:var(--muted)}.notice{background:#211d35;border:1px solid #49406f;color:#d9d0ff;border-radius:11px;padding:11px;font-size:12px;margin-top:10px}.barrow{display:grid;grid-template-columns:25px 1fr 76px;align-items:center;gap:9px;margin:8px 0}.track{height:10px;background:#0a1220;border-radius:99px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#8877ff,#45e0d0);border-radius:99px;width:0}.barval{text-align:right;color:#cbd7f2;font-size:12px}.result{font-size:13px;color:#d6e1f9;white-space:pre-wrap;overflow-wrap:anywhere}.muted{color:var(--muted)}.footer{text-align:center;color:#70809e;font-size:11px;margin-top:18px}@media(min-width:760px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.wide{grid-column:span 2}.fullrow{grid-column:1/-1}}@media(max-width:420px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.brand h1{font-size:17px}.card{padding:13px}}
 </style>
 </head>
-<body>
-<div class="wrap">
-<header class="top">
-<div class="logo">D</div>
-<div><div class="brand">Digit Data Lab</div><div class="sub">PERSONAL ANALYTICS WORKSPACE</div></div>
-<div class="pill">● OFFLINE MODE</div>
-</header>
-<section class="hero">
-<div class="eyebrow">DATA • PATTERNS • STATISTICS</div>
-<h1>Understand your <span style="color:var(--blue)">data.</span></h1>
-<p>A clean workspace for exploring digit frequencies, distributions and basic statistics.</p>
-</section>
-<section class="grid">
-<div class="panel"><div class="label">TOTAL DIGITS</div><div class="metric" id="total">20</div><div class="label">In current sample</div></div>
-<div class="panel"><div class="label">UNIQUE DIGITS</div><div class="metric" id="unique">10</div><div class="label">Different values found</div></div>
-<div class="panel"><div class="label">MOST FREQUENT</div><div class="metric" id="most">2</div><div class="label">Highest observed count</div></div>
-<div class="panel"><div class="label">MEAN DIGIT</div><div class="metric" id="average">4.10</div><div class="label">Average value</div></div>
-</section>
-<div class="main-grid">
-<div>
-<section class="panel">
-<h2>Sequence explorer</h2>
-<p class="muted">Enter digits from 0–9, using commas, spaces or a continuous string.</p>
-<input id="sequence" value="1, 2, 4, 2, 7, 1, 9, 4, 2, 6, 0, 8, 1, 5, 4, 7, 3, 2, 9, 6">
-<input type="file" id="csvFile" accept=".csv,.txt">
-<button onclick="analyse()">Analyse data</button>
-<button class="secondary" onclick="resetData()">Restore sample</button>
-<p id="message" class="note" aria-live="polite"></p>
-</section>
-<section class="panel">
-<h2>Digit distribution</h2>
-<div id="tiles" class="tiles"></div>
-</section>
-</div>
-<div>
-<section class="panel">
-<h2>Frequency overview</h2>
-<p class="note">Observed count for each digit</p>
-<div id="chart"></div>
-</section>
-<section class="panel">
-<h2>About this dashboard</h2>
-<p class="note">This dashboard calculates statistics from the digits you provide. The sample is illustrative and is not a live data feed.</p>
-<p class="note">Past frequencies describe the supplied dataset; they do not establish what a future result will be.</p>
-</section>
-</div>
-</div>
-<footer>DIGIT DATA LAB · EDUCATIONAL STATISTICS PROJECT</footer>
-</div>
+<body><main>
+<header class="top"><div class="brand"><div class="logo">D</div><div><h1>DIGIT DATA LAB</h1><p>MARKET STATISTICS & RESEARCH</p></div></div><div class="pill"><span class="statusdot" id="statusDot"></span><span id="topStatus">Offline · Historical mode</span></div></header>
+<div class="grid">
+<section class="card"><div class="eyebrow">01 · Strategy</div><h2>Analysis configuration</h2><label for="strategy">Strategy type</label><select id="strategy"><option>Matches / Differs</option><option>Over / Under</option><option>Even / Odd</option><option>Rise / Fall</option></select><label for="market">Market / index</label><select id="market"><option>Volatility 10 (1s)</option><option>Volatility 10</option><option>Volatility 25 (1s)</option><option>Volatility 25</option><option>Volatility 50 (1s)</option><option>Volatility 50</option><option>Volatility 75 (1s)</option><option>Volatility 75</option><option>Volatility 100 (1s)</option><option>Volatility 100</option><option>Volatility 150 (1s)</option><option>Volatility 250 (1s)</option><option>Other / imported dataset</option></select><div class="notice">Market selection labels the dataset only; it does not rank an index as best for trading.</div></section>
+<section class="card"><div class="eyebrow">02 · Connection</div><h2>Data stream status</h2><div class="stats"><div class="stat"><div class="v" id="connState">Offline</div><div class="k">Connection</div></div><div class="stat"><div class="v" id="tickCount">0</div><div class="k">Imported observations</div></div><div class="stat"><div class="v" id="lastUpdate">—</div><div class="k">Last update</div></div></div><p class="sub">No live feed is active. A real connection must be implemented and tested before showing live status.</p><div class="row"><button class="secondary" id="demoBtn">Load sample data</button><button class="secondary" id="clearBtn">Clear data</button></div></section>
+<section class="card"><div class="eyebrow">03 · Historical data</div><h2>Import observations</h2><label for="dataInput">Paste digit sequence or delimited data</label><textarea id="dataInput" placeholder="Example: 1, 1, 2, 3, 3, 7, 0, 4"></textarea><label for="fileInput">Or choose a CSV / TXT file</label><input id="fileInput" type="file" accept=".csv,.txt,text/plain,text/csv"><div class="row" style="margin-top:10px"><button id="analyzeBtn">Analyze dataset</button><button class="secondary" id="exampleBtn">Use example</button></div><p class="sub">For digit analysis, the importer extracts digits 0–9 from your file. Keep a separate copy of original data.</p></section>
+<section class="card wide"><div class="eyebrow">04 · Statistical engine</div><h2>Dataset summary</h2><div class="stats"><div class="stat"><div class="v" id="total">0</div><div class="k">Total digits</div></div><div class="stat"><div class="v" id="unique">0 / 10</div><div class="k">Distinct digits observed</div></div><div class="stat"><div class="v" id="mean">—</div><div class="k">Mean digit</div></div><div class="stat"><div class="v" id="most">—</div><div class="k">Most frequent digit</div></div><div class="stat"><div class="v" id="evenPct">—</div><div class="k">Even digits</div></div><div class="stat"><div class="v" id="oddPct">—</div><div class="k">Odd digits</div></div></div><div id="statNote" class="notice">Import a historical dataset to calculate its statistics. Results describe the supplied data only.</div></section>
+<section class="card"><div class="eyebrow">05 · Frequency distribution</div><h2>Digit occurrences</h2><div id="bars"><p class="sub">Frequency bars will appear after analysis.</p></div></section>
+<section class="card"><div class="eyebrow">06 · Research model</div><h2>Pattern validation</h2><div class="stat"><div class="k">Uniform-frequency reference</div><div class="v">10% per digit</div></div><p class="sub">A reference baseline, not a claim about every market or the next outcome.</p><div id="validation" class="result">Waiting for enough observations.</div><div class="notice">This version uses transparent statistical summaries, not a trained neural network. It does not produce trading signals or fabricated confidence percentages.</div></section>
+<section class="card fullrow"><div class="eyebrow">Research notes</div><h2>Interpretation & limitations</h2><p class="result" id="interpretation">No dataset analyzed yet. Upload historical observations to begin.</p><p class="sub">Historical frequencies alone do not establish predictability. Any future model would need time-ordered training and testing, a simple baseline comparison, and probability calibration on unseen data.</p></section>
+</div><div class="footer">Digit Data Lab · Educational statistical research · No trading advice</div></main>
 <script>
-const sample="1, 2, 4, 2, 7, 1, 9, 4, 2, 6, 0, 8, 1, 5, 4, 7, 3, 2, 9, 6";
-function analyse(){
-const raw=document.getElementById("sequence").value;
-const digits=raw.replace(/[\s,;]+/g,"");
-if(!digits||!/^[0-9]+$/.test(digits)){
-document.getElementById("message").textContent="Please enter digits from 0 to 9 only.";
-return;
-}
-const counts=Array(10).fill(0);
-for(const ch of digits)counts[Number(ch)]++;
-const total=digits.length,max=Math.max(...counts);
-const mean=[...digits].reduce((s,ch)=>s+Number(ch),0)/total;
-document.getElementById("total").textContent=total;
-document.getElementById("unique").textContent=counts.filter(n=>n>0).length;
-document.getElementById("most").textContent=counts.indexOf(max)+" ("+max+")";
-document.getElementById("average").textContent=mean.toFixed(2);
-document.getElementById("message").textContent="Analysis complete: "+total+" digits counted.";
-document.getElementById("chart").innerHTML=counts.map((n,d)=>'<div class="barrow"><b>'+d+'</b><div class="track"><div class="fill" style="width:'+(n/max*100)+'%"></div></div><span>'+n+' · '+(n/total*100).toFixed(0)+'%</span></div>').join("");
-document.getElementById("tiles").innerHTML=counts.map((n,d)=>'<div class="tile"><b>'+d+'</b><span>Count '+n+'</span></div>').join("");
-}
-function resetData(){document.getElementById("sequence").value=sample;analyse()}
-analyse();
-document.getElementById("csvFile").addEventListener("change", async function(){
-  const file = this.files[0];
-  if (!file) return;
-
-  try {
-    const text = await file.text();
-    const digits = text.replace(/[\s,;]+/g, "");
-
-    if (!digits || !/^[0-9]+$/.test(digits)) {
-      document.getElementById("message").textContent =
-        "Invalid file. Please use a CSV or text file containing digits 0–9 only.";
-      return;
-    }
-
-    document.getElementById("sequence").value = digits;
-    analyse();
-  } catch (error) {
-    document.getElementById("message").textContent =
-      "Could not read the file. Please try another file.";
-  }
-});
-</script>
-</body>
-</html>
+const $=id=>document.getElementById(id);let digits=[];
+function setStatus(text,kind='offline'){$('topStatus').textContent=text;$('connState').textContent=kind==='ok'?'Imported':kind==='error'?'Error':'Offline';$('statusDot').style.background=kind==='ok'?'var(--green)':kind==='error'?'var(--red)':'var(--amber)'}
+function extractDigits(s){return(s.match(/[0-9]/g)||[]).map(Number)}
+function parseInput(){return extractDigits($('dataInput').value.trim())}
+function analyze(arr){digits=arr;$('tickCount').textContent=arr.length.toLocaleString();$('lastUpdate').textContent=arr.length?new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'}):'—';setStatus(arr.length?'Historical data loaded':'Offline · No data',arr.length?'ok':'offline');const n=arr.length,counts=Array(10).fill(0);arr.forEach(d=>counts[d]++);$('total').textContent=n.toLocaleString();$('unique').textContent=counts.filter(x=>x>0).length+' / 10';$('mean').textContent=n?(arr.reduce((a,b)=>a+b,0)/n).toFixed(3):'—';const max=Math.max(...counts);$('most').textContent=n?counts.map((c,d)=>({c,d})).filter(x=>x.c===max).map(x=>x.d).join(', ')+' ('+max+')':'—';const ev=arr.filter(x=>x%2===0).length;$('evenPct').textContent=n?(ev/n*100).toFixed(1)+'%':'—';$('oddPct').textContent=n?((n-ev)/n*100).toFixed(1)+'%':'—';$('bars').innerHTML='';if(!n){$('bars').innerHTML='<p class="sub">Frequency bars will appear after analysis.</p>'}else counts.forEach((c,d)=>{const pct=c/n*100,line=document.createElement('div');line.className='barrow';line.innerHTML='<strong>'+d+'</strong><div class="track"><div class="fill" style="width:'+pct+'%"></div></div><div class="barval">'+c+' · '+pct.toFixed(1)+'%</div>';$('bars').appendChild(line)});if(!n){$('statNote').textContent='Import a historical dataset to calculate its statistics.';$('validation').textContent='Waiting for observations.';$('interpretation').textContent='No dataset analyzed yet.';return}const expected=n/10,chi=counts.reduce((sum,c)=>sum+((c-expected)**2/expected),0),top=counts.map((c,d)=>({c,d})).filter(x=>x.c===max).map(x=>x.d).join(', ');$('statNote').textContent='Observed counts only. Market: '+$('market').value+'. Selected category: '+$('strategy').value+'.';$('validation').textContent='Uniform-frequency reference test: chi-square = '+chi.toFixed(2)+' (9 degrees of freedom). '+(expected<5?'Caution: expected count per digit is below 5, so the usual chi-square approximation may be unreliable.':'This is descriptive only; it does not forecast the next outcome or account for serial dependence.')+'\nLargest observed count: digit '+top+' at '+(max/n*100).toFixed(2)+'%.';$('interpretation').textContent='Analyzed '+n+' digits. Most frequent digit(s): '+top+'. Even/odd split: '+(ev/n*100).toFixed(1)+'% even and '+((n-ev)/n*100).toFixed(1)+'% odd. Differences from a 10% reference may reflect random variation, data-generation properties, or sampling issues. Test on separate later observations before drawing conclusions.'}
+$('analyzeBtn').addEventListener('click',()=>{const a=parseInput();if(!a.length){setStatus('No valid digit data','error');$('interpretation').textContent='No digits found. Paste data or choose a CSV/TXT file.';return}analyze(a)});
+const sample='1,1,2,3,3,7,0,4,2,8,1,5,9,3,6,2,0,4,7,1,8,5,2,9,3,3,6,0,1,4,7,8,2,5,9,0,6,1,3,8,4,2,7,5,0,9,1,6,3,2';
+$('exampleBtn').addEventListener('click',()=>{$('dataInput').value=sample;analyze(parseInput())});$('demoBtn').addEventListener('click',()=>{$('dataInput').value=sample;analyze(parseInput())});$('clearBtn').addEventListener('click',()=>{$('dataInput').value='';$('fileInput').value='';analyze([])});
+$('fileInput').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{const t=await f.text();$('dataInput').value=t;const a=extractDigits(t);if(!a.length){setStatus('No digits found','error');$('interpretation').textContent='The selected file did not contain digits 0–9.';return}analyze(a)}catch(err){setStatus('File read failed','error');$('interpretation').textContent='Could not read this file. Try a plain TXT or CSV file.'}});
+</script></body></html>
