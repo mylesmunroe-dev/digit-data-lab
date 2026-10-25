@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digit Data Lab</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:#eef2ff;padding:20px}
+header{padding:20px 0}
+h1{margin:0;color:#9caeff;font-size:28px}
+p{color:#aab4ce;line-height:1.5}
+.card{background:#151d33;border:1px solid #293653;border-radius:16px;padding:18px;margin:16px 0}
+h2{font-size:17px;margin-top:0}
+input,button{width:100%;padding:13px;border-radius:9px;font-size:15px;margin-top:8px}
+input{background:#0b1020;color:white;border:1px solid #405071}
+button{background:#7389ff;color:#081024;border:0;font-weight:bold}
+button.secondary{background:#263450;color:white}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.tile{background:#202b46;padding:12px 4px;border-radius:10px;text-align:center}
+.tile strong{display:block;font-size:22px;color:#aab8ff}
+.tile small{color:#b4bfd7}
+.barrow{display:grid;grid-template-columns:22px 1fr 36px;gap:8px;align-items:center;margin:11px 0}
+.track{height:10px;background:#293653;border-radius:8px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,#7c8dff,#42d6c5);width:0}
+.note{font-size:12px;color:#91a0bd}
+#message{white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header>
+<p>EDUCATIONAL DATA PROJECT</p>
+<h1>Digit Data Lab</h1>
+<p>Explore digit frequencies and simple statistics from a sequence of numbers.</p>
+</header>
+
+<section class="card">
+<h2>1. Enter a sequence</h2>
+<p>Use digits from 0 to 9. Separate them with spaces or commas, or enter a continuous string of digits.</p>
+<input id="sequence" value="1, 2, 4, 2, 7, 1, 9, 4, 2, 6, 0, 8, 1, 5, 4, 7, 3, 2, 9, 6" placeholder="Enter digits here">
+<button onclick="analyse()">Analyse sequence</button>
+<button class="secondary" onclick="resetData()">Restore sample</button>
+<p class="note">Sample data is illustrative, not live market data.</p>
+</section>
+
+<section class="card">
+<h2>2. Summary</h2>
+<div class="grid">
+<div class="tile"><strong id="total">20</strong><small>Total digits</small></div>
+<div class="tile"><strong id="unique">10</strong><small>Unique digits</small></div>
+<div class="tile"><strong id="most">2</strong><small>Most frequent</small></div>
+<div class="tile"><strong id="least">0</strong><small>Least frequent</small></div>
+<div class="tile"><strong id="average">4.1</strong><small>Mean digit</small></div>
+</div>
+<p id="message" class="note"></p>
+</section>
+
+<section class="card">
+<h2>3. Frequency chart</h2>
+<div id="chart"></div>
+</section>
+
+<section class="card">
+<h2>4. Frequency table</h2>
+<div id="table" class="grid"></div>
+</section>
+
+<section class="card">
+<h2>What does this show?</h2>
+<p>The chart counts how often each digit appears in the sequence you entered. A high count only describes this sample; it does not tell you what a future digit will be.</p>
+<p class="note">This project is an offline educational statistics demo. It does not connect to a market feed or generate trading predictions.</p>
+</section>
+
+<script>
+const sample="1, 2, 4, 2, 7, 1, 9, 4, 2, 6, 0, 8, 1, 5, 4, 7, 3, 2, 9, 6";
+
+function analyse(){
+ const raw=document.getElementById("sequence").value;
+ const digits=raw.replace(/[\s,;]+/g,"");
+ if(!digits || !/^[0-9]+$/.test(digits)){
+  document.getElementById("message").textContent="Please enter digits from 0 to 9 only.";
+  return;
+ }
+ const counts=Array(10).fill(0);
+ for(const ch of digits) counts[Number(ch)]++;
+ const total=digits.length;
+ const max=Math.max(...counts), min=Math.min(...counts);
+ const most=counts.indexOf(max), least=counts.indexOf(min);
+ const mean=digits.split("").reduce((sum,ch)=>sum+Number(ch),0)/total;
+ document.getElementById("total").textContent=total;
+ document.getElementById("unique").textContent=counts.filter(n=>n>0).length;
+ document.getElementById("most").textContent=most+" ("+max+")";
+ document.getElementById("least").textContent=least+" ("+min+")";
+ document.getElementById("average").textContent=mean.toFixed(2);
+ document.getElementById("message").textContent="Counts are based only on the "+total+" digits in your current sample.";
+ document.getElementById("chart").innerHTML=counts.map((n,d)=>
+  '<div class="barrow"><b>'+d+'</b><div class="track"><div class="fill" style="width:'+(n/max*100)+'%"></div></div><span>'+n+'</span></div>'
+ ).join("");
+ document.getElementById("table").innerHTML=counts.map((n,d)=>
+  '<div class="tile"><strong>'+d+'</strong><small>Count: '+n+'</small><br><small>'+(n/total*100).toFixed(1)+'%</small></div>'
+ ).join("");
+}
+function resetData(){
+ document.getElementById("sequence").value=sample;
+ analyse();
+}
+analyse();
+</script>
+</body>
+</html>
