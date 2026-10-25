@@ -64,6 +64,7 @@ footer{text-align:center;color:#7786a3;font-size:11px;padding:20px 0}
 <h2>Sequence explorer</h2>
 <p class="muted">Enter digits from 0–9, using commas, spaces or a continuous string.</p>
 <input id="sequence" value="1, 2, 4, 2, 7, 1, 9, 4, 2, 6, 0, 8, 1, 5, 4, 7, 3, 2, 9, 6">
+<input type="file" id="csvFile" accept=".csv,.txt">
 <button onclick="analyse()">Analyse data</button>
 <button class="secondary" onclick="resetData()">Restore sample</button>
 <p id="message" class="note" aria-live="polite"></p>
@@ -111,6 +112,27 @@ document.getElementById("tiles").innerHTML=counts.map((n,d)=>'<div class="tile">
 }
 function resetData(){document.getElementById("sequence").value=sample;analyse()}
 analyse();
+document.getElementById("csvFile").addEventListener("change", async function(){
+  const file = this.files[0];
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const digits = text.replace(/[\s,;]+/g, "");
+
+    if (!digits || !/^[0-9]+$/.test(digits)) {
+      document.getElementById("message").textContent =
+        "Invalid file. Please use a CSV or text file containing digits 0–9 only.";
+      return;
+    }
+
+    document.getElementById("sequence").value = digits;
+    analyse();
+  } catch (error) {
+    document.getElementById("message").textContent =
+      "Could not read the file. Please try another file.";
+  }
+});
 </script>
 </body>
 </html>
